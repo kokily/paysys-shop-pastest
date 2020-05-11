@@ -3,6 +3,8 @@ import Router from 'koa-router';
 import mongoose from 'mongoose';
 import logger from 'koa-logger';
 import bodyParser from 'koa-bodyparser';
+import jwtMiddleware from './libs/token';
+import api from './api';
 
 const app = new Koa();
 const router = new Router();
@@ -20,12 +22,11 @@ if (MONGODB_URI) {
     .catch((err: Error) => console.log(err));
 }
 
-router.get('/', (ctx: Context) => {
-  ctx.body = 'Testing';
-});
+router.use('/api', api.routes());
 
 app.use(logger());
 app.use(bodyParser());
+app.use(jwtMiddleware);
 app.use(router.routes());
 app.use(router.allowedMethods());
 
